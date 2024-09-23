@@ -23,14 +23,9 @@ void prettify_memory(double bytes, char *result, int result_size)
     snprintf(result, result_size, "%.3f %s", bytes, units[i]);
 }
 
-// Define the connection string
-#define CONNECTION_STRING "Driver={ODBC Driver 18 for SQL Server};Server={SERV};Database=azure_database;Uid={USER};Pwd={PASS};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
-// replace {SERV}, {USER}, {PASS} with your server, username, password from .env file
-
-
 void handleError(SQLHANDLE handle, SQLSMALLINT handleType, SQLHENV env, SQLHDBC dbc, SQLHSTMT stmt, const char *customMessage)
 {
-    
+
     SQLCHAR sqlState[6], errorMsg[SQL_MAX_MESSAGE_LENGTH];
     SQLINTEGER nativeError;
     SQLSMALLINT msgLen;
@@ -56,9 +51,9 @@ void handleError(SQLHANDLE handle, SQLSMALLINT handleType, SQLHENV env, SQLHDBC 
 
 int main()
 {
-    char* serv = getenv("SERV");
-    char* user = getenv("USER_SQL");
-    char* pass = getenv("PASS");
+    char *serv = getenv("DB_SERV");
+    char *user = getenv("DB_USER");
+    char *pass = getenv("DB_PASS");
     SQLCHAR connString[1024];
     snprintf((char *)connString, sizeof(connString), "Driver={ODBC Driver 18 for SQL Server};Server=%s;Database=azure_database;Uid=%s;Pwd=%s;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;", serv, user, pass);
     printf("Connecting to the database\n");
@@ -113,7 +108,6 @@ int main()
         handleError(stmt, SQL_HANDLE_STMT, env, dbc, stmt, "Failed to create table");
     }
 
-    
     char buffer[16];
 
     while (1)
@@ -129,10 +123,6 @@ int main()
         }
         nanosleep(&UPDATE_INTERVAL, NULL);
     }
-    free(buffer);
-
-    // get all the rows from the table
-    ret = SQLExecDirect(stmt, (SQLCHAR *)"SELECT * FROM my_table", SQL_NTS);
 
     SQLFreeHandle(SQL_HANDLE_STMT, stmt);
     SQLDisconnect(dbc);
