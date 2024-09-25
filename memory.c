@@ -1,6 +1,6 @@
 #include "memory.h"
 
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 
 #include <sysinfoapi.h>
 struct memory get_memory()
