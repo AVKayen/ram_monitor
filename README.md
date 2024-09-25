@@ -2,7 +2,9 @@
 Written in C using system APIs ```<sysinfoapi.h>/<sys/sysinfo.h>``` depending on the platform and uploading data to a cloud DB.
 
 ```main.c``` - Main program
+
 ```database.c|h``` - Database logic
+
 ```memory.c|h``` - RAM reading logic
 
 ## Requirements
