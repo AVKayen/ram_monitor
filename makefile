@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -lodbc
 
-SRCS = main.c memory.c
+SRCS = main.c memory.c database.c
 OBJS = $(SRCS:.c=.o)
 TARGET = ram_monitor
 
