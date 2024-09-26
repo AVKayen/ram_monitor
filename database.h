@@ -12,6 +12,6 @@ typedef struct DBConnection
 
 void initializeDBConnection(DBConnection *conn, const char *connString);
 void closeDBConnection(DBConnection *conn);
-void executeSQLQuery(DBConnection *conn, const char *query);
+char *executeSQLQuery(DBConnection *conn, const char *query);
 
 #endif

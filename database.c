@@ -6,7 +6,10 @@
 #include <stdlib.h>
 #include <sql.h>
 #include <sqlext.h>
+#include <string.h>
 #include "database.h"
+
+#define BUFFER_SIZE 256
 
 void handleError(SQLHANDLE handle, SQLSMALLINT handleType, DBConnection *conn, const char *customMessage)
 {
@@ -65,7 +68,7 @@ void initializeDBConnection(DBConnection *conn, const char *connString)
         handleError(conn->dbc, SQL_HANDLE_DBC, conn, "Failed to allocate connection handle");
     }
 
-    ret = SQLDriverConnect(conn->dbc, NULL, (SQLCHAR*)connString, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_COMPLETE);
+    ret = SQLDriverConnect(conn->dbc, NULL, (SQLCHAR *)connString, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_COMPLETE);
     if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO)
     {
         handleError(conn->dbc, SQL_HANDLE_DBC, conn, "Failed to connect to the database");
@@ -87,11 +90,53 @@ void closeDBConnection(DBConnection *conn)
     SQLFreeHandle(SQL_HANDLE_ENV, conn->env);
 }
 
-void executeSQLQuery(DBConnection *conn, const char *query)
+char *executeSQLQuery(DBConnection *conn, const char *query)
 {
-    SQLRETURN ret = SQLExecDirect(conn->stmt, (SQLCHAR*)query, SQL_NTS);
+    SQLRETURN ret = SQLExecDirect(conn->stmt, (SQLCHAR *)query, SQL_NTS);
     if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO)
     {
         handleError(conn->stmt, SQL_HANDLE_STMT, conn, "Failed to execute query");
+        return NULL;
     }
+
+    char *result = (char *)malloc(BUFFER_SIZE);
+    if (!result)
+    {
+        fprintf(stderr, "Failed to allocate memory for result\n");
+        return NULL;
+    }
+    result[0] = '\0';
+
+    if (strstr(query, "SELECT") != NULL)
+    {
+        ret = SQLFetch(conn->stmt);
+        if (ret == SQL_NO_DATA)
+        {
+            free(result);
+            return NULL;
+        }
+        else if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO)
+        {
+            handleError(conn->stmt, SQL_HANDLE_STMT, conn, "Failed to fetch data");
+            free(result);
+            return NULL;
+        }
+
+        SQLCHAR buffer[BUFFER_SIZE];
+        SQLLEN indicator;
+        ret = SQLGetData(conn->stmt, 1, SQL_C_CHAR, buffer, sizeof(buffer), &indicator);
+        if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO)
+        {
+            handleError(conn->stmt, SQL_HANDLE_STMT, conn, "Failed to fetch data");
+            free(result);
+            return NULL;
+        }
+
+        strncpy(result, (char *)buffer, BUFFER_SIZE - 1);
+        result[BUFFER_SIZE - 1] = '\0';
+
+        SQLCloseCursor(conn->stmt);
+    }
+
+    return result;
 }

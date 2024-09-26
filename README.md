@@ -11,7 +11,7 @@ Written in C using system APIs ```<sysinfoapi.h>/<sys/sysinfo.h>``` depending on
 
 ## Requirements
 1. gcc compiler
-2. ODBC driver (e.g. ```ODBC Driver 18 for SQL Server```) and ```unixODBC``` (for linux target)
+2. ODBC driver (e.g. ```ODBC Driver 18 for SQL Server```) | ```unixODBC``` (for linux target)
 3. mingw-w64 (for windows target)
 
 ## How to use
