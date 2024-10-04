@@ -1,5 +1,5 @@
 ## Ram Usage Monitor 
-Written in C using system APIs ```<sysinfoapi.h>/<sys/sysinfo.h>``` depending on the platform and uploading data to a cloud DB.
+Written in C using system APIs ```<sysinfoapi.h>```/```<sys/sysinfo.h>``` depending on the platform and uploading data to a cloud DB. Prints current and avarage free memory every second
 
 ```main.c``` - Main program
 
@@ -15,6 +15,6 @@ Written in C using system APIs ```<sysinfoapi.h>/<sys/sysinfo.h>``` depending on
 3. mingw-w64 (for windows target)
 
 ## How to use
-1. Compile the code using ```make``` on linux. If you want to target windows, you can use ```PLATFORM=WINDOWS```. If you want older version without SQL, use ```OLD=1```.
+1. Compile the code using ```make``` on linux. If you want to target windows, you can use ```PLATFORM=WINDOWS```.
 2. Export the environment variables ```DB_SERV```, ```DB_USER```, ```DB_PASS```, ```DB_USER``` with the appropriate values. The database is an SQL database driven by ODBC.
-3. Run the executable using ```./ram_monitor```
+3. Run the executable using ```./ram_monitor```/```.\ram_monitor.exe```
