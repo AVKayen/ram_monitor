@@ -5,7 +5,7 @@ ifeq ($(PLATFORM),WINDOWS)
 	TARGET = ram_monitor.exe
 else
 	CC = gcc
-	CFLAGS = -Wall -Wextra -g -lodbc
+	CFLAGS = -Wall -Wextra -g
 	LDFLAGS = -lodbc
 	TARGET = ram_monitor
 endif
